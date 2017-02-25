@@ -1,0 +1,61 @@
+--- orig_bak/AndroidManifest.xml	2017-02-25 10:55:14.000000000 +0800
++++ orig/AndroidManifest.xml	2017-02-25 11:36:16.559605264 +0800
+@@ -1,17 +1,17 @@
+ <?xml version="1.0" encoding="utf-8" standalone="no"?>
+-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" package="org.telegram.messenger" platformBuildVersionCode="25" platformBuildVersionName="7.1.1">
++<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" package="info.lolicon.telegram" platformBuildVersionCode="25" platformBuildVersionName="7.1.1">
+     <uses-feature android:name="android.hardware.location.gps" android:required="false"/>
+     <uses-feature android:name="android.hardware.location.network" android:required="false"/>
+     <uses-feature android:name="android.hardware.location" android:required="false"/>
+     <uses-feature android:name="android.hardware.LOCATION" android:required="false"/>
+     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>
+-    <uses-permission android:name="org.telegram.messenger.permission.MAPS_RECEIVE"/>
+-    <uses-permission android:name="org.telegram.messenger.permission.C2D_MESSAGE"/>
++    <uses-permission android:name="info.lolicon.telegram.permission.MAPS_RECEIVE"/>
++    <uses-permission android:name="info.lolicon.telegram.permission.C2D_MESSAGE"/>
+     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
+     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+-    <permission android:name="org.telegram.messenger.permission.MAPS_RECEIVE" android:protectionLevel="signature"/>
+-    <permission android:name="org.telegram.messenger.permission.C2D_MESSAGE" android:protectionLevel="signature"/>
++    <permission android:name="info.lolicon.telegram.permission.MAPS_RECEIVE" android:protectionLevel="signature"/>
++    <permission android:name="info.lolicon.telegram.permission.C2D_MESSAGE" android:protectionLevel="signature"/>
+     <supports-screens android:anyDensity="true" android:largeScreens="true" android:normalScreens="true" android:resizeable="true" android:smallScreens="true" android:xlargeScreens="true"/>
+     <uses-feature android:glEsVersion="0x20000" android:required="true"/>
+     <uses-feature android:name="android.hardware.telephony" android:required="false"/>
+@@ -60,7 +60,7 @@
+     <uses-permission android:name="android.permission.READ_APP_BADGE"/>
+     <uses-permission android:name="com.oppo.launcher.permission.READ_SETTINGS"/>
+     <uses-permission android:name="com.oppo.launcher.permission.WRITE_SETTINGS"/>
+-    <application android:allowBackup="false" android:hardwareAccelerated="@bool/useHardwareAcceleration" android:icon="@drawable/ic_launcher" android:label="@string/AppName" android:largeHeap="true" android:manageSpaceActivity="org.telegram.ui.ManageSpaceActivity" android:name="org.telegram.messenger.ApplicationLoader" android:theme="@style/Theme.TMessages.Start">
++    <application android:allowBackup="false" android:hardwareAccelerated="@bool/useHardwareAcceleration" android:icon="@drawable/ic_launcher" android:label="Petergram" android:largeHeap="true" android:manageSpaceActivity="org.telegram.ui.ManageSpaceActivity" android:name="org.telegram.messenger.ApplicationLoader" android:theme="@style/Theme.TMessages.Start">
+         <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyA-t0jLPjUt2FxrA8VPK2EiYHcYcboIR6k"/>
+         <activity android:name="net.hockeyapp.android.UpdateActivity"/>
+         <receiver android:exported="true" android:name="com.google.android.gms.gcm.GcmReceiver" android:permission="com.google.android.c2dm.permission.SEND">
+@@ -146,7 +146,7 @@
+                 <category android:name="android.intent.category.DEFAULT"/>
+                 <data android:scheme="tg"/>
+             </intent-filter>
+-            <meta-data android:name="android.service.chooser.chooser_target_service" android:value=".TgChooserTargetService"/>
++            <meta-data android:name="android.service.chooser.chooser_target_service" android:value="org.telegram.messenger.TgChooserTargetService"/>
+         </activity>
+         <activity android:configChanges="keyboard|keyboardHidden|orientation|screenSize" android:excludeFromRecents="true" android:hardwareAccelerated="@bool/useHardwareAcceleration" android:name="org.telegram.ui.ShareActivity" android:stateNotNeeded="true" android:theme="@style/Theme.TMessages.Transparent" android:windowSoftInputMode="adjustPan">
+             <intent-filter android:icon="@drawable/ic_launcher" android:priority="1">
+@@ -247,7 +247,7 @@
+         <receiver android:enabled="true" android:name="org.telegram.messenger.PopupReplyReceiver"/>
+         <receiver android:enabled="true" android:name="org.telegram.messenger.ShareBroadcastReceiver"/>
+         <receiver android:exported="false" android:name="org.telegram.messenger.NotificationDismissReceiver"/>
+-        <provider android:authorities="org.telegram.messenger.provider" android:exported="false" android:grantUriPermissions="true" android:name="android.support.v4.content.FileProvider">
++        <provider android:authorities="info.lolicon.telegram.provider" android:exported="false" android:grantUriPermissions="true" android:name="android.support.v4.content.FileProvider">
+             <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/provider_paths"/>
+         </provider>
+         <uses-library android:name="com.sec.android.app.multiwindow" android:required="false"/>
+@@ -282,7 +282,7 @@
+                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+             </intent-filter>
+         </service>
+-        <provider android:authorities="org.telegram.messenger.firebaseinitprovider" android:exported="false" android:initOrder="100" android:name="com.google.firebase.provider.FirebaseInitProvider"/>
++        <provider android:authorities="info.lolicon.telegram.firebaseinitprovider" android:exported="false" android:initOrder="100" android:name="com.google.firebase.provider.FirebaseInitProvider"/>
+         <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version"/>
+     </application>
+ </manifest>

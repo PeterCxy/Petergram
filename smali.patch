@@ -1,0 +1,809 @@
+diff -ruN orig_bak/smali/org/telegram/messenger/BuildVars.smali orig/smali/org/telegram/messenger/BuildVars.smali
+--- orig_bak/smali/org/telegram/messenger/BuildVars.smali	2017-02-25 10:55:17.000000000 +0800
++++ orig/smali/org/telegram/messenger/BuildVars.smali	2017-02-25 14:50:03.000000000 +0800
+@@ -55,12 +55,12 @@
+     sput-object v0, Lorg/telegram/messenger/BuildVars;->BUILD_VERSION_STRING:Ljava/lang/String;
+ 
+     .line 16
+-    const/4 v0, 0x6
++    const v0, 0x81af
+ 
+     sput v0, Lorg/telegram/messenger/BuildVars;->APP_ID:I
+ 
+     .line 17
+-    const-string/jumbo v0, "eb06d4abfb49dc3eeb1aeb98ae0f581e"
++    const-string/jumbo v0, "dbf6d03283f7ccc832f3230f845a1093"
+ 
+     sput-object v0, Lorg/telegram/messenger/BuildVars;->APP_HASH:Ljava/lang/String;
+ 
+@@ -75,7 +75,7 @@
+     sput-object v0, Lorg/telegram/messenger/BuildVars;->HOCKEY_APP_HASH_DEBUG:Ljava/lang/String;
+ 
+     .line 20
+-    const-string/jumbo v0, "drklo.2kb@gmail.com"
++    const-string/jumbo v0, "me@lolicon.info"
+ 
+     sput-object v0, Lorg/telegram/messenger/BuildVars;->SEND_LOGS_EMAIL:Ljava/lang/String;
+ 
+diff -ruN orig_bak/smali/org/telegram/messenger/Emoji.smali orig/smali/org/telegram/messenger/Emoji.smali
+--- orig_bak/smali/org/telegram/messenger/Emoji.smali	2017-02-25 10:55:17.000000000 +0800
++++ orig/smali/org/telegram/messenger/Emoji.smali	2017-02-25 14:04:10.594597824 +0800
+@@ -2217,20 +2217,27 @@
+     if-eqz v13, :cond_18
+ 
+     .line 454
+-    new-instance v22, Lorg/telegram/messenger/Emoji$EmojiSpan;
++    new-instance v22, Lorg/telegram/ui/Components/TypefaceSpan;
++    const-string v27, "fonts/NotoColorEmoji.ttf"
+ 
+-    const/16 v25, 0x0
++    invoke-static/range {v27 .. v27}, Lorg/telegram/messenger/AndroidUtilities;->getTypeface(Ljava/lang/String;)Landroid/graphics/Typeface;
+ 
+-    move-object/from16 v0, v22
++    move-result-object v27
++
++    const/16 v24, 0x0
+ 
+-    move/from16 v1, v25
++    const/16 v25, -0x1
++
++    move-object/from16 v0, v22
+ 
+-    move/from16 v2, p2
++    move-object/from16 v1, v27
+ 
+-    move-object/from16 v3, p1
++    move/from16 v2, v24
+ 
+-    invoke-direct {v0, v13, v1, v2, v3}, Lorg/telegram/messenger/Emoji$EmojiSpan;-><init>(Lorg/telegram/messenger/Emoji$EmojiDrawable;IILandroid/graphics/Paint$FontMetricsInt;)V
++    move/from16 v3, v25
+ 
++    invoke-direct {v0, v1, v2, v3}, Lorg/telegram/ui/Components/TypefaceSpan;-><init>(Landroid/graphics/Typeface;II)V
++    
+     .line 455
+     .local v22, "span":Lorg/telegram/messenger/Emoji$EmojiSpan;
+     add-int v25, v23, v24
+diff -ruN orig_bak/smali/org/telegram/ui/Components/EmojiView$EmojiColorPickerView.smali orig/smali/org/telegram/ui/Components/EmojiView$EmojiColorPickerView.smali
+--- orig_bak/smali/org/telegram/ui/Components/EmojiView$EmojiColorPickerView.smali	2017-02-25 10:55:18.000000000 +0800
++++ orig/smali/org/telegram/ui/Components/EmojiView$EmojiColorPickerView.smali	2017-02-25 14:39:28.000000000 +0800
+@@ -29,6 +29,8 @@
+ 
+ .field private selection:I
+ 
++.field private textPaint:Landroid/graphics/Paint;
++
+ .field final synthetic this$0:Lorg/telegram/ui/Components/EmojiView;
+ 
+ 
+@@ -86,6 +88,16 @@
+ 
+     iput-object v0, p0, Lorg/telegram/ui/Components/EmojiView$EmojiColorPickerView;->arrowDrawable:Landroid/graphics/drawable/Drawable;
+ 
++    new-instance v0, Landroid/graphics/Paint;
++    invoke-direct {v0}, Landroid/graphics/Paint;-><init>()V
++    iput-object v0, p0, Lorg/telegram/ui/Components/EmojiView$EmojiColorPickerView;->textPaint:Landroid/graphics/Paint;
++    const-string v1, "fonts/NotoColorEmoji.ttf"
++    invoke-static {v1}, Lorg/telegram/messenger/AndroidUtilities;->getTypeface(Ljava/lang/String;)Landroid/graphics/Typeface;
++    move-result-object v1
++    invoke-virtual {v0, v1}, Landroid/graphics/Paint;->setTypeface(Landroid/graphics/Typeface;)Landroid/graphics/Typeface;
++    const/high16 v1, -0x1000000
++    invoke-virtual {v0, v1}, Landroid/graphics/Paint;->setColor(I)V
++
+     .line 493
+     return-void
+ .end method
+@@ -355,37 +367,22 @@
+     .line 536
+     .end local v2    # "color":Ljava/lang/String;
+     :cond_1
+-    invoke-static {v1}, Lorg/telegram/messenger/Emoji;->getEmojiBigDrawable(Ljava/lang/String;)Landroid/graphics/drawable/Drawable;
+-
+-    move-result-object v3
+-
+-    .line 537
+-    .local v3, "drawable":Landroid/graphics/drawable/Drawable;
+-    if-eqz v3, :cond_2
+-
+     .line 538
+     iget-object v6, p0, Lorg/telegram/ui/Components/EmojiView$EmojiColorPickerView;->this$0:Lorg/telegram/ui/Components/EmojiView;
+ 
+     # getter for: Lorg/telegram/ui/Components/EmojiView;->emojiSize:I
+     invoke-static {v6}, Lorg/telegram/ui/Components/EmojiView;->access$1200(Lorg/telegram/ui/Components/EmojiView;)I
+-
+-    move-result v6
+-
+-    add-int/2addr v6, v4
+-
+-    iget-object v7, p0, Lorg/telegram/ui/Components/EmojiView$EmojiColorPickerView;->this$0:Lorg/telegram/ui/Components/EmojiView;
+-
+-    # getter for: Lorg/telegram/ui/Components/EmojiView;->emojiSize:I
+-    invoke-static {v7}, Lorg/telegram/ui/Components/EmojiView;->access$1200(Lorg/telegram/ui/Components/EmojiView;)I
+-
+     move-result v7
+-
++    int-to-float v7, v7
++    iget-object v8, p0, Lorg/telegram/ui/Components/EmojiView$EmojiColorPickerView;->textPaint:Landroid/graphics/Paint;
++    const v9, 0x3f4ccccd    # 0.8f
++    mul-float/2addr v7, v9
++    invoke-virtual {v8, v7}, Landroid/graphics/Paint;->setTextSize(F)V
++    float-to-int v7, v7
+     add-int/2addr v7, v5
+-
+-    invoke-virtual {v3, v4, v5, v6, v7}, Landroid/graphics/drawable/Drawable;->setBounds(IIII)V
+-
+-    .line 539
+-    invoke-virtual {v3, p1}, Landroid/graphics/drawable/Drawable;->draw(Landroid/graphics/Canvas;)V
++    int-to-float v7, v7
++    int-to-float v9, v4
++    invoke-virtual {p1, v1, v9, v7, v8}, Landroid/graphics/Canvas;->drawText(Ljava/lang/String; FFLandroid/graphics/Paint;)V
+ 
+     .line 505
+     :cond_2
+diff -ruN orig_bak/smali/org/telegram/ui/Components/EmojiView$EmojiGridAdapter.smali orig/smali/org/telegram/ui/Components/EmojiView$EmojiGridAdapter.smali
+--- orig_bak/smali/org/telegram/ui/Components/EmojiView$EmojiGridAdapter.smali	2017-02-25 10:55:18.000000000 +0800
++++ orig/smali/org/telegram/ui/Components/EmojiView$EmojiGridAdapter.smali	2017-02-25 13:07:47.000000000 +0800
+@@ -161,12 +161,7 @@
+     .local v2, "coloredCode":Ljava/lang/String;
+     :cond_1
+     :goto_0
+-    invoke-static {v2}, Lorg/telegram/messenger/Emoji;->getEmojiBigDrawable(Ljava/lang/String;)Landroid/graphics/drawable/Drawable;
+-
+-    move-result-object v4
+-
+-    invoke-virtual {v3, v4}, Lorg/telegram/ui/Components/EmojiView$ImageViewEmoji;->setImageDrawable(Landroid/graphics/drawable/Drawable;)V
+-
++    invoke-virtual {v3, v0}, Lorg/telegram/ui/Components/EmojiView$ImageViewEmoji;->setText(Ljava/lang/CharSequence;)V
+     .line 2173
+     invoke-virtual {v3, v0}, Lorg/telegram/ui/Components/EmojiView$ImageViewEmoji;->setTag(Ljava/lang/Object;)V
+ 
+diff -ruN orig_bak/smali/org/telegram/ui/Components/EmojiView$ImageViewEmoji.smali orig/smali/org/telegram/ui/Components/EmojiView$ImageViewEmoji.smali
+--- orig_bak/smali/org/telegram/ui/Components/EmojiView$ImageViewEmoji.smali	2017-02-25 10:55:18.000000000 +0800
++++ orig/smali/org/telegram/ui/Components/EmojiView$ImageViewEmoji.smali	2017-02-25 13:58:01.000000000 +0800
+@@ -1,5 +1,5 @@
+ .class Lorg/telegram/ui/Components/EmojiView$ImageViewEmoji;
+-.super Landroid/widget/ImageView;
++.super Lorg/telegram/ui/Components/ForegroundTextView;
+ .source "EmojiView.java"
+ 
+ 
+@@ -38,7 +38,7 @@
+     iput-object p1, p0, Lorg/telegram/ui/Components/EmojiView$ImageViewEmoji;->this$0:Lorg/telegram/ui/Components/EmojiView;
+ 
+     .line 164
+-    invoke-direct {p0, p2}, Landroid/widget/ImageView;-><init>(Landroid/content/Context;)V
++    invoke-direct {p0, p2}, Landroid/widget/TextView;-><init>(Landroid/content/Context;)V
+ 
+     .line 165
+     new-instance v0, Lorg/telegram/ui/Components/EmojiView$ImageViewEmoji$1;
+@@ -64,10 +64,15 @@
+     invoke-virtual {p0, v0}, Lorg/telegram/ui/Components/EmojiView$ImageViewEmoji;->setBackgroundDrawable(Landroid/graphics/drawable/Drawable;)V
+ 
+     .line 225
+-    sget-object v0, Landroid/widget/ImageView$ScaleType;->CENTER:Landroid/widget/ImageView$ScaleType;
+-
+-    invoke-virtual {p0, v0}, Lorg/telegram/ui/Components/EmojiView$ImageViewEmoji;->setScaleType(Landroid/widget/ImageView$ScaleType;)V
+-
++    const/4 v0, 0x0
++    sget v0, Landroid/view/Gravity;->CENTER:I
++    invoke-virtual {p0, v0}, Lorg/telegram/ui/Components/EmojiView$ImageViewEmoji;->setGravity(I)V
++    const/high16 v0, -0x1000000
++    invoke-virtual {p0, v0}, Lorg/telegram/ui/Components/EmojiView$ImageViewEmoji;->setTextColor(I)V
++    const-string v0, "fonts/NotoColorEmoji.ttf"
++    invoke-static {v0}, Lorg/telegram/messenger/AndroidUtilities;->getTypeface(Ljava/lang/String;)Landroid/graphics/Typeface;
++    move-result-object v0
++    invoke-virtual {p0, v0}, Lorg/telegram/ui/Components/EmojiView$ImageViewEmoji;->setTypeface(Landroid/graphics/Typeface;)V
+     .line 226
+     return-void
+ .end method
+@@ -479,6 +484,14 @@
+ 
+     invoke-virtual {p0, v0, v1}, Lorg/telegram/ui/Components/EmojiView$ImageViewEmoji;->setMeasuredDimension(II)V
+ 
++    const v0, 0x3f19999a    # 0.6f
++    invoke-virtual {p0}, Lorg/telegram/ui/Components/EmojiView$ImageViewEmoji;->getPaint()Landroid/text/TextPaint;
++    move-result-object v1
++    invoke-virtual {p0}, Lorg/telegram/ui/Components/EmojiView$ImageViewEmoji;->getMeasuredWidth()I
++    move-result v2
++    int-to-float v2, v2
++    mul-float/2addr v0, v2
++    invoke-virtual {v1, v0}, Landroid/text/TextPaint;->setTextSize(F)V
+     .line 270
+     return-void
+ .end method
+@@ -610,11 +623,11 @@
+ 
+     .line 305
+     :goto_1
+-    invoke-static {v0}, Lorg/telegram/messenger/Emoji;->getEmojiBigDrawable(Ljava/lang/String;)Landroid/graphics/drawable/Drawable;
++#    invoke-static {v0}, Lorg/telegram/messenger/Emoji;->getEmojiBigDrawable(Ljava/lang/String;)Landroid/graphics/drawable/Drawable;
+ 
+-    move-result-object v5
++#    move-result-object v5
+ 
+-    invoke-virtual {p0, v5}, Lorg/telegram/ui/Components/EmojiView$ImageViewEmoji;->setImageDrawable(Landroid/graphics/drawable/Drawable;)V
++#    invoke-virtual {p0, v5}, Lorg/telegram/ui/Components/EmojiView$ImageViewEmoji;->setImageDrawable(Landroid/graphics/drawable/Drawable;)V
+ 
+     .line 306
+     const/4 v5, 0x0
+@@ -657,7 +670,7 @@
+     iput v5, p0, Lorg/telegram/ui/Components/EmojiView$ImageViewEmoji;->lastY:F
+ 
+     .line 342
+-    invoke-super {p0, p1}, Landroid/widget/ImageView;->onTouchEvent(Landroid/view/MotionEvent;)Z
++    invoke-super {p0, p1}, Landroid/widget/TextView;->onTouchEvent(Landroid/view/MotionEvent;)Z
+ 
+     move-result v5
+ 
+diff -ruN orig_bak/smali/org/telegram/ui/Components/ForegroundTextView.smali orig/smali/org/telegram/ui/Components/ForegroundTextView.smali
+--- orig_bak/smali/org/telegram/ui/Components/ForegroundTextView.smali	1970-01-01 08:00:00.000000000 +0800
++++ orig/smali/org/telegram/ui/Components/ForegroundTextView.smali	2017-02-25 11:07:20.000000000 +0800
+@@ -0,0 +1,569 @@
++.class public Lorg/telegram/ui/Components/ForegroundTextView;
++.super Landroid/widget/TextView;
++.source "ForegroundTextView.java"
++
++
++# instance fields
++.field private mForeground:Landroid/graphics/drawable/Drawable;
++
++.field mForegroundBoundsChanged:Z
++
++.field private mForegroundGravity:I
++
++.field protected mForegroundInPadding:Z
++
++.field private final mOverlayBounds:Landroid/graphics/Rect;
++
++.field private final mSelfBounds:Landroid/graphics/Rect;
++
++
++# direct methods
++.method public constructor <init>(Landroid/content/Context;)V
++    .locals 1
++    .param p1, "context"    # Landroid/content/Context;
++
++    .prologue
++    .line 32
++    const/4 v0, 0x0
++
++    invoke-direct {p0, p1, v0}, Lorg/telegram/ui/Components/ForegroundTextView;-><init>(Landroid/content/Context;Landroid/util/AttributeSet;)V
++
++    .line 33
++    return-void
++.end method
++
++.method public constructor <init>(Landroid/content/Context;Landroid/util/AttributeSet;)V
++    .locals 1
++    .param p1, "context"    # Landroid/content/Context;
++    .param p2, "attrs"    # Landroid/util/AttributeSet;
++
++    .prologue
++    .line 36
++    const/4 v0, 0x0
++
++    invoke-direct {p0, p1, p2, v0}, Lorg/telegram/ui/Components/ForegroundTextView;-><init>(Landroid/content/Context;Landroid/util/AttributeSet;I)V
++
++    .line 37
++    return-void
++.end method
++
++.method public constructor <init>(Landroid/content/Context;Landroid/util/AttributeSet;I)V
++    .locals 1
++    .param p1, "context"    # Landroid/content/Context;
++    .param p2, "attrs"    # Landroid/util/AttributeSet;
++    .param p3, "defStyleAttr"    # I
++
++    .prologue
++    .line 40
++    invoke-direct {p0, p1, p2, p3}, Landroid/widget/TextView;-><init>(Landroid/content/Context;Landroid/util/AttributeSet;I)V
++
++    .line 21
++    new-instance v0, Landroid/graphics/Rect;
++
++    invoke-direct {v0}, Landroid/graphics/Rect;-><init>()V
++
++    iput-object v0, p0, Lorg/telegram/ui/Components/ForegroundTextView;->mSelfBounds:Landroid/graphics/Rect;
++
++    .line 23
++    new-instance v0, Landroid/graphics/Rect;
++
++    invoke-direct {v0}, Landroid/graphics/Rect;-><init>()V
++
++    iput-object v0, p0, Lorg/telegram/ui/Components/ForegroundTextView;->mOverlayBounds:Landroid/graphics/Rect;
++
++    .line 25
++    const/16 v0, 0x77
++
++    iput v0, p0, Lorg/telegram/ui/Components/ForegroundTextView;->mForegroundGravity:I
++
++    .line 27
++    const/4 v0, 0x1
++
++    iput-boolean v0, p0, Lorg/telegram/ui/Components/ForegroundTextView;->mForegroundInPadding:Z
++
++    .line 29
++    const/4 v0, 0x0
++
++    iput-boolean v0, p0, Lorg/telegram/ui/Components/ForegroundTextView;->mForegroundBoundsChanged:Z
++
++    .line 41
++    return-void
++.end method
++
++
++# virtual methods
++.method public draw(Landroid/graphics/Canvas;)V
++    .locals 9
++    .param p1, "canvas"    # Landroid/graphics/Canvas;
++        .annotation build Landroid/support/annotation/NonNull;
++        .end annotation
++    .end param
++
++    .prologue
++    const/4 v7, 0x0
++
++    .line 160
++    invoke-super {p0, p1}, Landroid/widget/TextView;->draw(Landroid/graphics/Canvas;)V
++
++    .line 162
++    iget-object v5, p0, Lorg/telegram/ui/Components/ForegroundTextView;->mForeground:Landroid/graphics/drawable/Drawable;
++
++    if-eqz v5, :cond_1
++
++    .line 163
++    iget-object v0, p0, Lorg/telegram/ui/Components/ForegroundTextView;->mForeground:Landroid/graphics/drawable/Drawable;
++
++    .line 165
++    .local v0, "foreground":Landroid/graphics/drawable/Drawable;
++    iget-boolean v5, p0, Lorg/telegram/ui/Components/ForegroundTextView;->mForegroundBoundsChanged:Z
++
++    if-eqz v5, :cond_0
++
++    .line 166
++    iput-boolean v7, p0, Lorg/telegram/ui/Components/ForegroundTextView;->mForegroundBoundsChanged:Z
++
++    .line 167
++    iget-object v3, p0, Lorg/telegram/ui/Components/ForegroundTextView;->mSelfBounds:Landroid/graphics/Rect;
++
++    .line 168
++    .local v3, "selfBounds":Landroid/graphics/Rect;
++    iget-object v2, p0, Lorg/telegram/ui/Components/ForegroundTextView;->mOverlayBounds:Landroid/graphics/Rect;
++
++    .line 170
++    .local v2, "overlayBounds":Landroid/graphics/Rect;
++    invoke-virtual {p0}, Lorg/telegram/ui/Components/ForegroundTextView;->getRight()I
++
++    move-result v5
++
++    invoke-virtual {p0}, Lorg/telegram/ui/Components/ForegroundTextView;->getLeft()I
++
++    move-result v6
++
++    sub-int v4, v5, v6
++
++    .line 171
++    .local v4, "w":I
++    invoke-virtual {p0}, Lorg/telegram/ui/Components/ForegroundTextView;->getBottom()I
++
++    move-result v5
++
++    invoke-virtual {p0}, Lorg/telegram/ui/Components/ForegroundTextView;->getTop()I
++
++    move-result v6
++
++    sub-int v1, v5, v6
++
++    .line 173
++    .local v1, "h":I
++    iget-boolean v5, p0, Lorg/telegram/ui/Components/ForegroundTextView;->mForegroundInPadding:Z
++
++    if-eqz v5, :cond_2
++
++    .line 174
++    invoke-virtual {v3, v7, v7, v4, v1}, Landroid/graphics/Rect;->set(IIII)V
++
++    .line 180
++    :goto_0
++    iget v5, p0, Lorg/telegram/ui/Components/ForegroundTextView;->mForegroundGravity:I
++
++    invoke-virtual {v0}, Landroid/graphics/drawable/Drawable;->getIntrinsicWidth()I
++
++    move-result v6
++
++    .line 181
++    invoke-virtual {v0}, Landroid/graphics/drawable/Drawable;->getIntrinsicHeight()I
++
++    move-result v7
++
++    .line 180
++    invoke-static {v5, v6, v7, v3, v2}, Landroid/view/Gravity;->apply(IIILandroid/graphics/Rect;Landroid/graphics/Rect;)V
++
++    .line 182
++    invoke-virtual {v0, v2}, Landroid/graphics/drawable/Drawable;->setBounds(Landroid/graphics/Rect;)V
++
++    .line 185
++    .end local v1    # "h":I
++    .end local v2    # "overlayBounds":Landroid/graphics/Rect;
++    .end local v3    # "selfBounds":Landroid/graphics/Rect;
++    .end local v4    # "w":I
++    :cond_0
++    invoke-virtual {v0, p1}, Landroid/graphics/drawable/Drawable;->draw(Landroid/graphics/Canvas;)V
++
++    .line 187
++    .end local v0    # "foreground":Landroid/graphics/drawable/Drawable;
++    :cond_1
++    return-void
++
++    .line 176
++    .restart local v0    # "foreground":Landroid/graphics/drawable/Drawable;
++    .restart local v1    # "h":I
++    .restart local v2    # "overlayBounds":Landroid/graphics/Rect;
++    .restart local v3    # "selfBounds":Landroid/graphics/Rect;
++    .restart local v4    # "w":I
++    :cond_2
++    invoke-virtual {p0}, Lorg/telegram/ui/Components/ForegroundTextView;->getPaddingLeft()I
++
++    move-result v5
++
++    invoke-virtual {p0}, Lorg/telegram/ui/Components/ForegroundTextView;->getPaddingTop()I
++
++    move-result v6
++
++    .line 177
++    invoke-virtual {p0}, Lorg/telegram/ui/Components/ForegroundTextView;->getPaddingRight()I
++
++    move-result v7
++
++    sub-int v7, v4, v7
++
++    invoke-virtual {p0}, Lorg/telegram/ui/Components/ForegroundTextView;->getPaddingBottom()I
++
++    move-result v8
++
++    sub-int v8, v1, v8
++
++    .line 176
++    invoke-virtual {v3, v5, v6, v7, v8}, Landroid/graphics/Rect;->set(IIII)V
++
++    goto :goto_0
++.end method
++
++.method public drawableHotspotChanged(FF)V
++    .locals 2
++    .param p1, "x"    # F
++    .param p2, "y"    # F
++
++    .prologue
++    .line 191
++    invoke-super {p0, p1, p2}, Landroid/widget/TextView;->drawableHotspotChanged(FF)V
++
++    .line 192
++    iget-object v0, p0, Lorg/telegram/ui/Components/ForegroundTextView;->mForeground:Landroid/graphics/drawable/Drawable;
++
++    if-eqz v0, :cond_0
++
++    .line 193
++    sget v0, Landroid/os/Build$VERSION;->SDK_INT:I
++
++    const/16 v1, 0x15
++
++    if-lt v0, v1, :cond_0
++
++    .line 194
++    iget-object v0, p0, Lorg/telegram/ui/Components/ForegroundTextView;->mForeground:Landroid/graphics/drawable/Drawable;
++
++    invoke-virtual {v0, p1, p2}, Landroid/graphics/drawable/Drawable;->setHotspot(FF)V
++
++    .line 197
++    :cond_0
++    return-void
++.end method
++
++.method protected drawableStateChanged()V
++    .locals 2
++
++    .prologue
++    .line 95
++    invoke-super {p0}, Landroid/widget/TextView;->drawableStateChanged()V
++
++    .line 96
++    iget-object v0, p0, Lorg/telegram/ui/Components/ForegroundTextView;->mForeground:Landroid/graphics/drawable/Drawable;
++
++    if-eqz v0, :cond_0
++
++    iget-object v0, p0, Lorg/telegram/ui/Components/ForegroundTextView;->mForeground:Landroid/graphics/drawable/Drawable;
++
++    invoke-virtual {v0}, Landroid/graphics/drawable/Drawable;->isStateful()Z
++
++    move-result v0
++
++    if-eqz v0, :cond_0
++
++    .line 97
++    iget-object v0, p0, Lorg/telegram/ui/Components/ForegroundTextView;->mForeground:Landroid/graphics/drawable/Drawable;
++
++    invoke-virtual {p0}, Lorg/telegram/ui/Components/ForegroundTextView;->getDrawableState()[I
++
++    move-result-object v1
++
++    invoke-virtual {v0, v1}, Landroid/graphics/drawable/Drawable;->setState([I)Z
++
++    .line 99
++    :cond_0
++    return-void
++.end method
++
++.method public getForeground()Landroid/graphics/drawable/Drawable;
++    .locals 1
++
++    .prologue
++    .line 143
++    iget-object v0, p0, Lorg/telegram/ui/Components/ForegroundTextView;->mForeground:Landroid/graphics/drawable/Drawable;
++
++    return-object v0
++.end method
++
++.method public getForegroundGravity()I
++    .locals 1
++
++    .prologue
++    .line 50
++    iget v0, p0, Lorg/telegram/ui/Components/ForegroundTextView;->mForegroundGravity:I
++
++    return v0
++.end method
++
++.method public jumpDrawablesToCurrentState()V
++    .locals 1
++
++    .prologue
++    .line 87
++    invoke-super {p0}, Landroid/widget/TextView;->jumpDrawablesToCurrentState()V
++
++    .line 88
++    iget-object v0, p0, Lorg/telegram/ui/Components/ForegroundTextView;->mForeground:Landroid/graphics/drawable/Drawable;
++
++    if-eqz v0, :cond_0
++
++    .line 89
++    iget-object v0, p0, Lorg/telegram/ui/Components/ForegroundTextView;->mForeground:Landroid/graphics/drawable/Drawable;
++
++    invoke-virtual {v0}, Landroid/graphics/drawable/Drawable;->jumpToCurrentState()V
++
++    .line 91
++    :cond_0
++    return-void
++.end method
++
++.method protected onLayout(ZIIII)V
++    .locals 1
++    .param p1, "changed"    # Z
++    .param p2, "left"    # I
++    .param p3, "top"    # I
++    .param p4, "right"    # I
++    .param p5, "bottom"    # I
++
++    .prologue
++    .line 148
++    invoke-super/range {p0 .. p5}, Landroid/widget/TextView;->onLayout(ZIIII)V
++
++    .line 149
++    iget-boolean v0, p0, Lorg/telegram/ui/Components/ForegroundTextView;->mForegroundBoundsChanged:Z
++
++    or-int/2addr v0, p1
++
++    iput-boolean v0, p0, Lorg/telegram/ui/Components/ForegroundTextView;->mForegroundBoundsChanged:Z
++
++    .line 150
++    return-void
++.end method
++
++.method protected onSizeChanged(IIII)V
++    .locals 1
++    .param p1, "w"    # I
++    .param p2, "h"    # I
++    .param p3, "oldw"    # I
++    .param p4, "oldh"    # I
++
++    .prologue
++    .line 154
++    invoke-super {p0, p1, p2, p3, p4}, Landroid/widget/TextView;->onSizeChanged(IIII)V
++
++    .line 155
++    const/4 v0, 0x1
++
++    iput-boolean v0, p0, Lorg/telegram/ui/Components/ForegroundTextView;->mForegroundBoundsChanged:Z
++
++    .line 156
++    return-void
++.end method
++
++.method public setForeground(Landroid/graphics/drawable/Drawable;)V
++    .locals 3
++    .param p1, "drawable"    # Landroid/graphics/drawable/Drawable;
++
++    .prologue
++    .line 110
++    iget-object v1, p0, Lorg/telegram/ui/Components/ForegroundTextView;->mForeground:Landroid/graphics/drawable/Drawable;
++
++    if-eq v1, p1, :cond_3
++
++    .line 111
++    iget-object v1, p0, Lorg/telegram/ui/Components/ForegroundTextView;->mForeground:Landroid/graphics/drawable/Drawable;
++
++    if-eqz v1, :cond_0
++
++    .line 112
++    iget-object v1, p0, Lorg/telegram/ui/Components/ForegroundTextView;->mForeground:Landroid/graphics/drawable/Drawable;
++
++    const/4 v2, 0x0
++
++    invoke-virtual {v1, v2}, Landroid/graphics/drawable/Drawable;->setCallback(Landroid/graphics/drawable/Drawable$Callback;)V
++
++    .line 113
++    iget-object v1, p0, Lorg/telegram/ui/Components/ForegroundTextView;->mForeground:Landroid/graphics/drawable/Drawable;
++
++    invoke-virtual {p0, v1}, Lorg/telegram/ui/Components/ForegroundTextView;->unscheduleDrawable(Landroid/graphics/drawable/Drawable;)V
++
++    .line 116
++    :cond_0
++    iput-object p1, p0, Lorg/telegram/ui/Components/ForegroundTextView;->mForeground:Landroid/graphics/drawable/Drawable;
++
++    .line 118
++    if-eqz p1, :cond_4
++
++    .line 119
++    const/4 v1, 0x0
++
++    invoke-virtual {p0, v1}, Lorg/telegram/ui/Components/ForegroundTextView;->setWillNotDraw(Z)V
++
++    .line 120
++    invoke-virtual {p1, p0}, Landroid/graphics/drawable/Drawable;->setCallback(Landroid/graphics/drawable/Drawable$Callback;)V
++
++    .line 121
++    invoke-virtual {p1}, Landroid/graphics/drawable/Drawable;->isStateful()Z
++
++    move-result v1
++
++    if-eqz v1, :cond_1
++
++    .line 122
++    invoke-virtual {p0}, Lorg/telegram/ui/Components/ForegroundTextView;->getDrawableState()[I
++
++    move-result-object v1
++
++    invoke-virtual {p1, v1}, Landroid/graphics/drawable/Drawable;->setState([I)Z
++
++    .line 124
++    :cond_1
++    iget v1, p0, Lorg/telegram/ui/Components/ForegroundTextView;->mForegroundGravity:I
++
++    const/16 v2, 0x77
++
++    if-ne v1, v2, :cond_2
++
++    .line 125
++    new-instance v0, Landroid/graphics/Rect;
++
++    invoke-direct {v0}, Landroid/graphics/Rect;-><init>()V
++
++    .line 126
++    .local v0, "padding":Landroid/graphics/Rect;
++    invoke-virtual {p1, v0}, Landroid/graphics/drawable/Drawable;->getPadding(Landroid/graphics/Rect;)Z
++
++    .line 131
++    .end local v0    # "padding":Landroid/graphics/Rect;
++    :cond_2
++    :goto_0
++    invoke-virtual {p0}, Lorg/telegram/ui/Components/ForegroundTextView;->requestLayout()V
++
++    .line 132
++    invoke-virtual {p0}, Lorg/telegram/ui/Components/ForegroundTextView;->invalidate()V
++
++    .line 134
++    :cond_3
++    return-void
++
++    .line 129
++    :cond_4
++    const/4 v1, 0x1
++
++    invoke-virtual {p0, v1}, Lorg/telegram/ui/Components/ForegroundTextView;->setWillNotDraw(Z)V
++
++    goto :goto_0
++.end method
++
++.method public setForegroundGravity(I)V
++    .locals 3
++    .param p1, "foregroundGravity"    # I
++
++    .prologue
++    .line 60
++    iget v1, p0, Lorg/telegram/ui/Components/ForegroundTextView;->mForegroundGravity:I
++
++    if-eq v1, p1, :cond_3
++
++    .line 61
++    const v1, 0x800007
++
++    and-int/2addr v1, p1
++
++    if-nez v1, :cond_0
++
++    .line 62
++    const v1, 0x800003
++
++    or-int/2addr p1, v1
++
++    .line 65
++    :cond_0
++    and-int/lit8 v1, p1, 0x70
++
++    if-nez v1, :cond_1
++
++    .line 66
++    or-int/lit8 p1, p1, 0x30
++
++    .line 69
++    :cond_1
++    iput p1, p0, Lorg/telegram/ui/Components/ForegroundTextView;->mForegroundGravity:I
++
++    .line 71
++    iget v1, p0, Lorg/telegram/ui/Components/ForegroundTextView;->mForegroundGravity:I
++
++    const/16 v2, 0x77
++
++    if-ne v1, v2, :cond_2
++
++    iget-object v1, p0, Lorg/telegram/ui/Components/ForegroundTextView;->mForeground:Landroid/graphics/drawable/Drawable;
++
++    if-eqz v1, :cond_2
++
++    .line 72
++    new-instance v0, Landroid/graphics/Rect;
++
++    invoke-direct {v0}, Landroid/graphics/Rect;-><init>()V
++
++    .line 73
++    .local v0, "padding":Landroid/graphics/Rect;
++    iget-object v1, p0, Lorg/telegram/ui/Components/ForegroundTextView;->mForeground:Landroid/graphics/drawable/Drawable;
++
++    invoke-virtual {v1, v0}, Landroid/graphics/drawable/Drawable;->getPadding(Landroid/graphics/Rect;)Z
++
++    .line 76
++    .end local v0    # "padding":Landroid/graphics/Rect;
++    :cond_2
++    invoke-virtual {p0}, Lorg/telegram/ui/Components/ForegroundTextView;->requestLayout()V
++
++    .line 78
++    :cond_3
++    return-void
++.end method
++
++.method protected verifyDrawable(Landroid/graphics/drawable/Drawable;)Z
++    .locals 1
++    .param p1, "who"    # Landroid/graphics/drawable/Drawable;
++
++    .prologue
++    .line 82
++    invoke-super {p0, p1}, Landroid/widget/TextView;->verifyDrawable(Landroid/graphics/drawable/Drawable;)Z
++
++    move-result v0
++
++    if-nez v0, :cond_0
++
++    iget-object v0, p0, Lorg/telegram/ui/Components/ForegroundTextView;->mForeground:Landroid/graphics/drawable/Drawable;
++
++    if-ne p1, v0, :cond_1
++
++    :cond_0
++    const/4 v0, 0x1
++
++    :goto_0
++    return v0
++
++    :cond_1
++    const/4 v0, 0x0
++
++    goto :goto_0
++.end method
