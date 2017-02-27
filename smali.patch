@@ -1,3 +1,56 @@
+diff -ruN orig_bak/smali/org/telegram/messenger/AndroidUtilities.smali orig/smali/org/telegram/messenger/AndroidUtilities.smali
+--- orig_bak/smali/org/telegram/messenger/AndroidUtilities.smali	2017-02-25 10:55:17.000000000 +0800
++++ orig/smali/org/telegram/messenger/AndroidUtilities.smali	2017-02-27 12:22:34.213657975 +0800
+@@ -4343,6 +4343,41 @@
+ 
+     .line 380
+     :try_start_1
++
++    # DO NOT load the embedded bold fonts
++    # We have had them for Android > 5.0
++    # Loading them will cause problems for CJK languages
++    const-string v4, "fonts/rmedium.ttf"
++    invoke-virtual {p0, v4}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
++    move-result v4
++    if-nez v4, :cond_medium
++    goto :goto_nonmedium
++
++    :cond_medium
++    # BOLD
++    # Note that you will need the -medium font for this
++    const-string v4, "sans-serif-medium"
++    sget v1, Landroid/graphics/Typeface;->NORMAL:I
++    invoke-static {v4, v1}, Landroid/graphics/Typeface;->create(Ljava/lang/String;I)Landroid/graphics/Typeface;
++    move-result-object v1
++    goto :goto_do_nothing
++
++    :goto_nonmedium
++    const-string v4, "fonts/ritalic.ttf"
++    invoke-virtual {p0, v4}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
++    move-result v4
++    if-nez v4, :cond_italic
++    goto :goto_nonitalic
++
++    :cond_italic
++    #ITALIC
++    const-string v4, "sans-serif"
++    sget v1, Landroid/graphics/Typeface;->ITALIC:I
++    invoke-static {v4, v1}, Landroid/graphics/Typeface;->create(Ljava/lang/String;I)Landroid/graphics/Typeface;
++    move-result-object v1
++    goto :goto_do_nothing
++
++    :goto_nonitalic
+     sget-object v2, Lorg/telegram/messenger/ApplicationLoader;->applicationContext:Landroid/content/Context;
+ 
+     invoke-virtual {v2}, Landroid/content/Context;->getAssets()Landroid/content/res/AssetManager;
+@@ -4353,6 +4388,7 @@
+ 
+     move-result-object v1
+ 
++    :goto_do_nothing
+     .line 381
+     .local v1, "t":Landroid/graphics/Typeface;
+     sget-object v2, Lorg/telegram/messenger/AndroidUtilities;->typefaceCache:Ljava/util/Hashtable;
 diff -ruN orig_bak/smali/org/telegram/messenger/BuildVars.smali orig/smali/org/telegram/messenger/BuildVars.smali
 --- orig_bak/smali/org/telegram/messenger/BuildVars.smali	2017-02-25 10:55:17.000000000 +0800
 +++ orig/smali/org/telegram/messenger/BuildVars.smali	2017-02-25 14:50:03.000000000 +0800
