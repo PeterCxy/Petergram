@@ -67,6 +67,16 @@ function write_version() {
     sed -i "s/android:versionName=\".*\">/android:versionName=\"$VERSION_NAME\">/" "$ORIG_DIR/AndroidManifest.xml"
 }
 
+function update_patches() {
+    info "Generating new patch for AndroidManifest.xml"
+    pushd "$WORKDIR" > /dev/null
+    diff -ruN "orig_bak/AndroidManifest.xml" "orig/AndroidManifest.xml" > "${__PWD}/AndroidManifest.patch"
+    info "Generating new patch for smali files"
+    diff -ruN "orig_bak/smali" "orig/smali" > "${__PWD}/smali.patch"
+    popd > /dev/null
+    info "Patches have been updated. Note that you have to add your new / removed files to files.copy and files.remove."
+}
+
 function clean() {
     info "Cleaning up."
     rm -rf work
@@ -80,6 +90,9 @@ case "$1" in
         initialize
         ;;
     write-version)
-        write_version;
+        write_version
+        ;;
+    update-patches)
+        update_patches
         ;;
 esac
