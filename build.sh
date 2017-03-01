@@ -38,6 +38,8 @@ function initialize() {
     patch "$ORIG_DIR/AndroidManifest.xml" < AndroidManifest.patch
     if [[ $? != 0 ]]; then
         error "Failed to apply some patches for AndroidManifest. You should resolve them later."
+    else
+        rm -rf "$ORIG_DIR/AndroidManifest.xml.orig"
     fi
     pushd "$ORIG_DIR" > /dev/null
     patch -p1 < "${__PWD}/smali.patch"
@@ -57,6 +59,14 @@ function initialize() {
     info "After making modifications, use 'build.sh package' to build the package. Use 'build.sh update-patches' to generate a new patchset."
 }
 
+function write_version() {
+    info "Writing version info into AndroidManifest.xml"
+    info "versionCode: $VERSION_CODE"
+    sed -i "s/android:versionCode=\".*\" /android:versionCode=\"$VERSION_CODE\" /" "$ORIG_DIR/AndroidManifest.xml"
+    info "versionName: $VERSION_NAME"
+    sed -i "s/android:versionName=\".*\">/android:versionName=\"$VERSION_NAME\">/" "$ORIG_DIR/AndroidManifest.xml"
+}
+
 function clean() {
     info "Cleaning up."
     rm -rf work
@@ -68,5 +78,8 @@ case "$1" in
         ;;
     initialize)
         initialize
+        ;;
+    write-version)
+        write_version;
         ;;
 esac
