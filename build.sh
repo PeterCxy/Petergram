@@ -82,6 +82,15 @@ function clean() {
     rm -rf work
 }
 
+function build() {
+    info "Compiling sources and building the apk"
+    apktool b "$ORIG_DIR" -o "$WORKDIR/petergram.apk"
+    info "Signing the apk. Please make sure your keystore exists and you will input the password."
+    jarsigner -keystore "$SIGNING_KEYSTORE" "$WORKDIR/petergram.apk" "$SIGNING_KEYALIAS"
+    info "Zipaligning the apk."
+    zipalign -f 4 "$WORKDIR/petergram.apk" "$WORKDIR/petergram_aligned.apk"
+}
+
 case "$1" in
     clean)
         clean
@@ -94,5 +103,8 @@ case "$1" in
         ;;
     update-patches)
         update_patches
+        ;;
+    build)
+        build
         ;;
 esac
