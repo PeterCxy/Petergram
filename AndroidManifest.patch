@@ -1,10 +1,10 @@
---- orig_bak/AndroidManifest.xml	2017-04-03 10:50:36.055896006 +0800
-+++ orig/AndroidManifest.xml	2017-04-03 10:50:58.000000000 +0800
+--- orig_bak/AndroidManifest.xml	2017-05-24 14:17:05.732048431 +0800
++++ orig/AndroidManifest.xml	2017-05-24 14:27:09.000000000 +0800
 @@ -1,20 +1,21 @@
  <?xml version="1.0" encoding="utf-8" standalone="no"?>
 -<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" package="org.telegram.messenger" platformBuildVersionCode="25" platformBuildVersionName="7.1.1">
 +<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" package="info.lolicon.telegram" platformBuildVersionCode="25" platformBuildVersionName="7.1.1"
-+    android:versionCode="9264" android:versionName="3.18.1">
++    android:versionCode="9265" android:versionName="4.0.1">
      <uses-feature android:name="android.hardware.location.gps" android:required="false"/>
      <uses-feature android:name="android.hardware.location.network" android:required="false"/>
      <uses-feature android:name="android.hardware.location" android:required="false"/>
@@ -30,13 +30,13 @@
 @@ -65,7 +66,7 @@
      <uses-permission android:name="com.oppo.launcher.permission.READ_SETTINGS"/>
      <uses-permission android:name="com.oppo.launcher.permission.WRITE_SETTINGS"/>
-     <meta-data android:name="android.support.VERSION" android:value="25.3.0"/>
--    <application android:allowBackup="false" android:hardwareAccelerated="@bool/useHardwareAcceleration" android:icon="@drawable/ic_launcher" android:label="@string/AppName" android:largeHeap="true" android:manageSpaceActivity="org.telegram.ui.ManageSpaceActivity" android:name="org.telegram.messenger.ApplicationLoader" android:theme="@style/Theme.TMessages.Start">
-+    <application android:allowBackup="false" android:hardwareAccelerated="@bool/useHardwareAcceleration" android:icon="@drawable/ic_launcher" android:label="Petergram" android:largeHeap="true" android:manageSpaceActivity="org.telegram.ui.ManageSpaceActivity" android:name="org.telegram.messenger.ApplicationLoader" android:theme="@style/Theme.TMessages.Start">
+     <meta-data android:name="android.support.VERSION" android:value="25.3.1"/>
+-    <application android:allowBackup="false" android:hardwareAccelerated="@bool/useHardwareAcceleration" android:icon="@mipmap/ic_launcher" android:label="@string/AppName" android:largeHeap="true" android:manageSpaceActivity="org.telegram.ui.ManageSpaceActivity" android:name="org.telegram.messenger.ApplicationLoader" android:roundIcon="@mipmap/ic_launcher" android:theme="@style/Theme.TMessages.Start">
++    <application android:allowBackup="false" android:hardwareAccelerated="@bool/useHardwareAcceleration" android:icon="@mipmap/ic_launcher" android:label="Petergram" android:largeHeap="true" android:manageSpaceActivity="org.telegram.ui.ManageSpaceActivity" android:name="org.telegram.messenger.ApplicationLoader" android:theme="@style/Theme.TMessages.Start">
          <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyA-t0jLPjUt2FxrA8VPK2EiYHcYcboIR6k"/>
          <activity android:name="net.hockeyapp.android.UpdateActivity"/>
          <receiver android:exported="true" android:name="com.google.android.gms.gcm.GcmReceiver" android:permission="com.google.android.c2dm.permission.SEND">
-@@ -151,7 +152,7 @@
+@@ -153,7 +154,7 @@
                  <category android:name="android.intent.category.DEFAULT"/>
                  <data android:scheme="tg"/>
              </intent-filter>
@@ -44,8 +44,8 @@
 +            <meta-data android:name="android.service.chooser.chooser_target_service" android:value="org.telegram.messenger.TgChooserTargetService"/>
          </activity>
          <activity android:configChanges="keyboard|keyboardHidden|orientation|screenSize" android:excludeFromRecents="true" android:hardwareAccelerated="@bool/useHardwareAcceleration" android:name="org.telegram.ui.ShareActivity" android:stateNotNeeded="true" android:theme="@style/Theme.TMessages.Transparent" android:windowSoftInputMode="adjustPan">
-             <intent-filter android:icon="@drawable/ic_launcher" android:priority="1">
-@@ -252,7 +253,7 @@
+             <intent-filter android:icon="@mipmap/ic_launcher" android:priority="1">
+@@ -254,7 +255,7 @@
          <receiver android:enabled="true" android:name="org.telegram.messenger.PopupReplyReceiver"/>
          <receiver android:enabled="true" android:name="org.telegram.messenger.ShareBroadcastReceiver"/>
          <receiver android:exported="false" android:name="org.telegram.messenger.NotificationDismissReceiver"/>
@@ -54,7 +54,7 @@
              <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/provider_paths"/>
          </provider>
          <uses-library android:name="com.sec.android.app.multiwindow" android:required="false"/>
-@@ -288,7 +289,7 @@
+@@ -291,7 +292,7 @@
                  <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
              </intent-filter>
          </service>
